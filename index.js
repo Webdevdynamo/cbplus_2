@@ -6,8 +6,8 @@
 // @version      2.0.1
 // @description  Better Chaturbate!
 // @author       ValzarMen
-// @include      https://www.chaturbate.com/*
-// @include      https://chaturbate.com/*
+// @match      https://www.chaturbate.com/*
+// @match      https://chaturbate.com/*
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/video.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui.min.js
