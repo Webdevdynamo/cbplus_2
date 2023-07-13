@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.1
+// @version      2.1.1
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -182,7 +182,7 @@ function camsSite() {
   body_main.appendChild(rightMenu)
   document.body.appendChild(body_main)
    if(newVersion){
-    getXMLModelList();
+        getXMLModelList();
        let myInterval = setInterval(getXMLModelList, 10000);
    }
 
@@ -207,6 +207,8 @@ function bindEvents(){
 }
 
 function getXMLModelList(){
+  globals.models_online = {};
+  globals.models_list = [];
   let filter_params = "";
   $.each(globals.filters, function(key, val){
       for (let i = 0; i < val.length; i++) {
@@ -215,7 +217,6 @@ function getXMLModelList(){
   });
   //globals.json_path_root
   let url = globals.json_path_root + filter_params;
-  //console.log(url);
   $.getJSON( url, function( data ) {
     $.each( data.results, function( key, val ) {
       globals.models_online[val['username']] = val;
