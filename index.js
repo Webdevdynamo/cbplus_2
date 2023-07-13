@@ -2,6 +2,7 @@
 // @name         cbplus2.0
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
+// @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @version      2.0.1
 // @description  Better Chaturbate!
 // @author       ValzarMen
