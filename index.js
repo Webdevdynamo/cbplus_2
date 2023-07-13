@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.0.2
+// @version      2.0.3
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -154,7 +154,7 @@ function camsSite() {
   document.body.appendChild(body_main)
    if(newVersion){
        checkForFollowed();
-       myInterval = setInterval(checkForFollowed, 10000);
+       //myInterval = setInterval(checkForFollowed, 10000);
    }
 
   $('div#mainDiv').sortable({
@@ -182,8 +182,10 @@ function checkForFollowed(){
         globals.models = [];
         follower_holder.find("li.roomCard").each(function(){
             $(this).find("div.title a").each(function(){
+                $(this).css("color","#f79603");
                 globals.models.push($(this).attr("data-room"));
             });
+            $(this).css("borderColor","#f79603");
             globals.items.push($(this));
         });
         populateFrame();
