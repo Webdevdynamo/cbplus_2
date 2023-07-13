@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.0.3
+// @version      2.0.4
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -200,7 +200,8 @@ function applyToTemplate(holder, val){
                 this.innerHTML = val.username;
             });
             new_template.find("div.follow_star").each(function(){
-                this.setAttribute("data-slug", val.username);
+              $(this).remove();
+                //this.setAttribute("data-slug", val.username);
                 //t.setFollowUnfollowStar(e);
                 //setFollowUnfollowStar(val.username);
             });
