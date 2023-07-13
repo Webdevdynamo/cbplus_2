@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.1.2
+// @version      2.1.3
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -745,11 +745,10 @@ function openInTab(div){
     window.open(URL, '_blank');
 }
 
-function refreshCam(div) {
+function refreshCam(div, model_name) {
   div.innerHTML = ''
-  div.classList.add('free')
-  console.dir(div)
-  let model_name = div.getAttribute("name")
+  //div.classList.add('free')
+  //let model_name = div.getAttribute("name")
   div.removeAttribute("name")
   
   let request = new XMLHttpRequest();
@@ -821,7 +820,7 @@ function topButtons(name) {
   })
   r.addEventListener('click', e => {
     e.preventDefault()
-    refreshCam(e.composedPath()[2])
+    refreshCam(e.composedPath()[2], name)
   })
   top.appendChild(x)
   x.addEventListener('click', e => {
