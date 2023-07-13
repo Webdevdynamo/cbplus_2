@@ -154,7 +154,7 @@ function camsSite() {
   document.body.appendChild(body_main)
    if(newVersion){
        checkForFollowed();
-       //myInterval = setInterval(checkForFollowed, 10000);
+       myInterval = setInterval(checkForFollowed, 10000);
    }
 
   $('div#mainDiv').sortable({
