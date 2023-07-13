@@ -1,18 +1,18 @@
 // ==UserScript==
-// @name         cbplus
-// @namespace    https://github.com/valzar-cbp/
+// @name         cbplus2.0
+// @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.0.0
+// @version      2.0.1
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @include      https://www.chaturbate.com/*
 // @include      https://chaturbate.com/*
-// @require      https://raw.githubusercontent.com/valzar-cbp/cbplus/master/require/video.min.js
-// @require      https://raw.githubusercontent.com/valzar-cbp/cbplus/master/require/jquery.min.js
-// @require      https://raw.githubusercontent.com/valzar-cbp/cbplus/master/require/jquery-ui.min.js
-// @resource     vjCSS https://raw.githubusercontent.com/valzar-cbp/cbplus/master/resource/video-js.css
-// @resource     jqCSS https://raw.githubusercontent.com/valzar-cbp/cbplus/master/resource/jquery-ui.css
-// @resource     cbCSS https://raw.githubusercontent.com/valzar-cbp/cbplus/master/resource/cbplus.css
+// @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/video.min.js
+// @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery.min.js
+// @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui.min.js
+// @resource     vjCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/video-js.css
+// @resource     jqCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/jquery-ui.css
+// @resource     cbCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/cbplus.css
 // @grant        GM_getResourceText
 // @grant        GM_addStyle
 // @run-at       document-end
@@ -40,9 +40,15 @@ function generalStuff() {
   globals.camsPath = '/cams-cbplus/'
   globals.blackPath = '/cams-blacklist/'
   globals.toursPath = '/tours/3/'
-  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=200&gender=f&gender=c';
+  globals.json_path_root_old = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=200&gender=f&gender=c';
+  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=200';
   globals.follow_path = 'https://chaturbate.com/followed-cams/online/';
   globals.path = document.location.pathname
+  globals.models = [];
+  globals.filters = {
+        "gender": ["f","c"],
+        "region": ["northamerica"],
+    };
   globals.frame = null;
   //console.log(globals.path);
   if (globals.path == globals.camsPath){
@@ -53,6 +59,18 @@ function generalStuff() {
       toursPage()
   }
 
+}
+
+function toggleFilter(key, val){
+    if(globals.filters[key].includes(val)){
+        //Remove Filter
+        let index = globals.filters[key].indexOf(val);
+        let x = globals.filters[key].splice(index, 1);
+    }else{
+        //Add Filter
+        globals.filters[key].push(val);
+    }
+    checkForFollowed();
 }
 
 function camsSite() {
@@ -96,6 +114,14 @@ function camsSite() {
   rightMenu.style.position = 'relative'
   rightMenu.style.overflow = 'auto'
   //rightMenu.style.flexDirection = 'column'
+  let filter_element = document.createElement("div");
+  filter_element.setAttribute("id", "filter_menu")
+    filter_element.innerHTML = "<input class='filter_check' type='checkbox' data-filter='gender' value='f' checked/> Female  &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='m' /> Male   &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='c' checked /> Couple    &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='s' /> Trans";
+  filter_element.style.padding = "10px"
+  rightMenu.appendChild(filter_element)
+
+
+
   let frame = document.createElement("iframe")
   frame.src = 'https://chaturbate.com/tours/3/?p=0&c=1&playerID='+playerID
   frame.style.flex = '1'
@@ -133,21 +159,36 @@ function camsSite() {
   $('div#mainDiv').sortable({
     tolerance: "pointer",
     revert: true,
+    cancel: ".vjs-volume-control",
     stop: function (event, ui) { Dropped(event, ui) }
   })
+   bindEvents();
   globals.chat.onmessage = readMessage
+}
+
+function bindEvents(){
+    $(".filter_check").each(function(){
+        this.onchange = function() {
+            toggleFilter(this.dataset.filter, this.value);
+        }
+    });
 }
 
 function checkForFollowed(){
     $.ajax({url: globals.follow_path, success: function(result){
         let follower_holder = $(result);
         globals.items = [];
+        globals.models = [];
         follower_holder.find("li.roomCard").each(function(){
+            $(this).find("div.title a").each(function(){
+                globals.models.push($(this).attr("data-room"));
+            });
             globals.items.push($(this));
         });
         populateFrame();
     }});
 }
+
 
 function applyToTemplate(holder, val){
     let new_template = globals.template.clone()
@@ -157,6 +198,8 @@ function applyToTemplate(holder, val){
             });
             new_template.find("div.follow_star").each(function(){
                 this.setAttribute("data-slug", val.username);
+                //t.setFollowUnfollowStar(e);
+                //setFollowUnfollowStar(val.username);
             });
 
             new_template.find("img.room_thumbnail").each(function(){
@@ -173,6 +216,7 @@ function applyToTemplate(holder, val){
                 this.innerHTML = val.num_users + " viewers";
             });
             new_template.find("span.genderc").each(function(){
+                if(val.gender == "t"){val.gender = "s";}
                 this.setAttribute("class", "gender" + val.gender);
             });
             new_template.find("span.time").each(function(){
@@ -199,18 +243,23 @@ function pullDataFromFollowed(followed_element){
 }
 
 function populateFrame(){
-    $.getJSON( globals.json_path_root, function( data ) {
+    let filter_params = "";
+    $.each(globals.filters, function(key, val){
+        for (let i = 0; i < val.length; i++) {
+            filter_params = filter_params + "&" + key + "=" + val[i];
+        }
+    });
+    //globals.json_path_root
+    $.getJSON( globals.json_path_root + filter_params, function( data ) {
         let holder = $(globals.frame).find("#card_holder");
         holder.html("");
         for (let i = 0; i < globals.items.length; i++) {
-            //let val = pullDataFromFollowed(globals.items[i]);
-            //console.log(val);
-
             globals.items[i].appendTo(holder);
-            //applyToTemplate(holder, val);
         }
         $.each( data.results, function( key, val ) {
-            applyToTemplate(holder, val);
+            if(!globals.models.includes(val['username'])){
+                applyToTemplate(holder, val);
+            }
         });
         toursPageNew()
     });
@@ -425,8 +474,9 @@ function addMiniButtons() {
     buttons.appendChild(blockButton)
 
     let gender = rooms[i].querySelector('div.title span').className.substr(-1)
-    if (gender == 'm' || gender == 's') rooms[i].style.display = "none";
-    else rooms[i].appendChild(buttons);
+    //if (gender == 'm' || gender == 's') rooms[i].style.display = "none";
+    //else
+    rooms[i].appendChild(buttons);
   }
 }
 
@@ -472,8 +522,9 @@ function addMiniButtonsNew() {
     buttons.appendChild(blockButton)
 
     let gender = rooms[i].querySelector('div.title span').className.substr(-1)
-    if (gender == 'm' || gender == 's') rooms[i].style.display = "none";
-    else rooms[i].appendChild(buttons);
+    //if (gender == 'm' || gender == 's') rooms[i].style.display = "none";
+    //else
+    rooms[i].appendChild(buttons);
   }
 }
 
@@ -516,7 +567,13 @@ function addCam(resp, div, model) {
                    <source src="${stream}" type=""application/x-mpegURL""></source></video>`
   div.appendChild(topButtons(model))
   const player = videojs(id, { controls: true, autoplay: true, preload: 'auto', fluid: false, enableLowInitialPlaylist: true })
-  player.volume(0.01)
+  player.volume(0.5)
+}
+
+function openInTab(div){
+    let model_name = div.getAttribute("name")
+    let URL = `https://chaturbate.com/${model_name}`;
+    window.open(URL, '_blank');
 }
 
 function refreshCam(div) {
@@ -563,13 +620,23 @@ function plusButton() {
 function topButtons(name) {
   let top = document.createElement('div')
   top.classList.add('topFrame')
+
+  let n = document.createElement('button')
+  n.innerHTML = name+' '
+  n.classList.add('topButton')
+   n.style.color = "#ffffff"
   let r = document.createElement('button')
-  r.innerHTML = name+' 🔄'
+  r.innerHTML = '🔄'
   r.classList.add('topButton')
   let x = document.createElement('button')
   x.innerHTML = '❌'
   x.classList.add('topButton')
+  top.appendChild(n)
   top.appendChild(r)
+  n.addEventListener('click', e => {
+    e.preventDefault()
+    openInTab(e.composedPath()[2])
+  })
   r.addEventListener('click', e => {
     e.preventDefault()
     refreshCam(e.composedPath()[2])
