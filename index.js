@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.1.3
+// @version      2.1.4
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -100,6 +100,7 @@ function camsSite() {
   //document.body.innerHTML = "";
   document.body.style.height = '100vh'
   document.body.style.display = 'flex'
+  document.body.style.padding = '0px 0px'
   document.body.style.flexDirection = 'column'
   document.body.appendChild(head)
 
@@ -122,16 +123,27 @@ function camsSite() {
   rightMenu.style.bottom = "0"
   rightMenu.style.right = "0"
   rightMenu.style.width = "600px"
+  rightMenu.style.height = "95%"
   //rightMenu.style.display = 'flex'
   //rightMenu.style.display = 'block'
   rightMenu.style.position = 'relative'
   rightMenu.style.overflow = 'auto'
   //rightMenu.style.flexDirection = 'column'
+  let filter_element_holder = document.createElement("div");
+  filter_element_holder.style.position = "relative";
+  filter_element_holder.style.zIndex = "1";
+  filter_element_holder.style.width = "100%";
+  filter_element_holder.style.height = "5%";
+  //filter_element.style.padding = "10px"
+
   let filter_element = document.createElement("div");
+  //filter_element.style.padding = "10px";
+  filter_element.style.borderBottom = "1px solid #f47321";
+  filter_element.style.backgroundColor = "#fff";
+  filter_element.style.height = "100%";
   filter_element.setAttribute("id", "filter_menu")
     filter_element.innerHTML = "<input class='filter_check' type='checkbox' data-filter='gender' value='f' checked/> Female  &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='m' /> Male   &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='c' checked /> Couple    &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='s' /> Trans";
-  filter_element.style.padding = "10px"
-  rightMenu.appendChild(filter_element)
+  filter_element_holder.appendChild(filter_element)
 
 
 
@@ -144,7 +156,7 @@ function camsSite() {
   let hideMenu = document.createElement("li");
   hideMenu.innerHTML = `<a style="color: gold;">        HIDE/SHOW LIST</a>`;
   hideMenu.style.cursor = 'pointer'
-  hideMenu.onclick = function () { $('div#rightMenu').toggle(1000) }
+  hideMenu.onclick = function () { $('div#rightMenuHolder').toggle(1000) }
   document.getElementById("nav").appendChild(hideMenu);
 
   let frame2 = $('<div align="center" style="clear:both; margin: 10px auto; position:absolute;"></div>');
@@ -159,10 +171,17 @@ function camsSite() {
    }else{
        globals.frame = frame;
    }
+   
+  let rightMenuHolder = document.createElement("div")
+  rightMenuHolder.setAttribute("id", "rightMenuHolder");
+  rightMenuHolder.style.position = "relative";
+
   frame2.appendChild(frame3)
   rightMenu.appendChild(globals.frame)
   body_main.appendChild(main)
-  body_main.appendChild(rightMenu)
+  body_main.appendChild(rightMenuHolder)
+  rightMenuHolder.appendChild(filter_element_holder)
+  rightMenuHolder.appendChild(rightMenu)
   document.body.appendChild(body_main)
    if(newVersion){
         getXMLModelList();
@@ -412,7 +431,7 @@ function blackSite() {
 }
 
 function toursPage() {
-  document.body.style.padding = '0 8px'
+  document.body.style.padding = '0 0'
   addMiniButtons()
   //setTimeout(function(){ window.location.reload(1); }, 60000);
   let playerID = document.location.search;
@@ -429,7 +448,7 @@ function openExistingCams(){
 }
 
 function toursPageNew() {
-  document.body.style.padding = '0 8px'
+  document.body.style.padding = '0 0'
   addMiniButtonsNew()
   //setTimeout(function(){ window.location.reload(1); }, 60000);
   let playerID = globals.playerID;
