@@ -16,10 +16,13 @@
 // @resource     cbCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/cbplus.css
 // @grant        GM_getResourceText
 // @grant        GM_addStyle
+// @grant        GM_setValue
+// @grant        GM_getValue
 // @run-at       document-end
 // ==/UserScript==
 
 'use strict';
+
 
 GM_addStyle (GM_getResourceText("vjCSS"));
 GM_addStyle (GM_getResourceText("jqCSS"));
@@ -29,23 +32,49 @@ const globals = {};
 
 globals.template = $('<li class="room_list_room roomCard" style="cursor: pointer;"><a href="/blondefoxsilverfox/" target="_blank" data-room="blondefoxsilverfox" class="no_select"><img src="https://roomimg.stream.highwebmedia.com/riw/blondefoxsilverfox.jpg?1688693700" width="180" height="101" alt="blondefoxsilverfox\'s chat room" class="png room_thumbnail" onmouseenter="window[\'tsExec\'] &amp;&amp; tsExec(function(ts){ event &amp;&amp; ts.roomReload.startStreaming(\'blondefoxsilverfox\', event.currentTarget) })" onmouseleave="window[\'tsExec\'] &amp;&amp; tsExec(function(ts){ ts.roomReload.stopStreaming(\'blondefoxsilverfox\') })"></a><div class="details"><div class="title"><a target="_blank" href="/blondefoxsilverfox/" data-room="blondefoxsilverfox" style="cursor: pointer;"> blondefoxsilverfox</a><div class="age_gender_container"><span class="age">99</span><span class="genderc" title="Couple"></span></div></div><ul class="subject"><li title="Girl Top off at goal!">girl top off at goal!</li></ul><ul class="sub-info"><li class="location">United States</li><li class="cams"><span class="time">24 mins</span><span class="comma">, </span><span class="viewers">3464 viewers</span></li></ul></div><div style="top: 2px; left: 2px; position: absolute; cursor: pointer;"><div name="blondefoxsilverfox">⛔</div></div></li>');
 
-function generalStuff() {
-  globals.http = new XMLHttpRequest()
+//unsafeWindow.myScript = this;
 
+// function getIP(){
+//   window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;  
+// 	var pc = new RTCPeerConnection({iceServers:[]}), 
+// 	noop = function(){}; 
+     
+//    	pc.createDataChannel("");  
+// 	pc.createOffer(pc.setLocalDescription.bind(pc), noop);   
+//     	pc.onicecandidate = function(ice){ 
+//    	if(!ice || !ice.candidate || !ice.candidate.candidate)  return;
+
+//         	var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate)[1];
+
+        
+// 	console.log(myIP);
+// }
+
+function generalStuff() {
+  //console.log(unsafeWindow);
+  //getIP();
   let terms = document.querySelector('#close_entrance_terms')
   if (terms) terms.click() // just accept terms
 
   addTabs()
   cleanPage()
-
+  
+  let open_rooms = GM_getValue("open_rooms");
+  if(typeof open_rooms == "undefined"){
+    globals.open_rooms = [];
+  }else{
+    globals.open_rooms = JSON.parse(open_rooms);
+  }
   globals.camsPath = '/cams-cbplus/'
   globals.blackPath = '/cams-blacklist/'
   globals.toursPath = '/tours/3/'
   globals.json_path_root_old = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=200&gender=f&gender=c';
-  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=200';
+  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=500';
   globals.follow_path = 'https://chaturbate.com/followed-cams/online/';
   globals.path = document.location.pathname
   globals.models = [];
+  globals.models_online = {};
+  globals.models_list = [];
   globals.filters = {
         "gender": ["f","c"],
         "region": ["northamerica"],
@@ -71,7 +100,7 @@ function toggleFilter(key, val){
         //Add Filter
         globals.filters[key].push(val);
     }
-    checkForFollowed();
+    getXMLModelList();
 }
 
 function camsSite() {
@@ -102,7 +131,7 @@ function camsSite() {
   main.style.flex = '1'
   main.style.display = 'grid'
   main.className = 'oneCam'
-  main.appendChild(camDiv())
+  main.appendChild(camDiv("empty"))
 
   let rightMenu = document.createElement("div")
   rightMenu.setAttribute("id", "rightMenu")
@@ -153,8 +182,8 @@ function camsSite() {
   body_main.appendChild(rightMenu)
   document.body.appendChild(body_main)
    if(newVersion){
-       checkForFollowed();
-       myInterval = setInterval(checkForFollowed, 10000);
+    getXMLModelList();
+       let myInterval = setInterval(getXMLModelList, 10000);
    }
 
   $('div#mainDiv').sortable({
@@ -164,7 +193,9 @@ function camsSite() {
     stop: function (event, ui) { Dropped(event, ui) }
   })
    bindEvents();
-  globals.chat.onmessage = readMessage
+   globals.chat.onmessage = readMessage;
+   setTimeout(openExistingCams, 1000);
+  //openExistingCams();
 }
 
 function bindEvents(){
@@ -175,7 +206,27 @@ function bindEvents(){
     });
 }
 
+function getXMLModelList(){
+  let filter_params = "";
+  $.each(globals.filters, function(key, val){
+      for (let i = 0; i < val.length; i++) {
+          filter_params = filter_params + "&" + key + "=" + val[i];
+      }
+  });
+  //globals.json_path_root
+  let url = globals.json_path_root + filter_params;
+  //console.log(url);
+  $.getJSON( url, function( data ) {
+    $.each( data.results, function( key, val ) {
+      globals.models_online[val['username']] = val;
+      globals.models_list.push(val);
+    });
+    checkForFollowed()
+  });
+}
+
 function checkForFollowed(){
+    //console.log("ONLINE MODELS", globals.models_online);
     $.ajax({url: globals.follow_path, success: function(result){
         let follower_holder = $(result);
         globals.items = [];
@@ -183,7 +234,22 @@ function checkForFollowed(){
         follower_holder.find("li.roomCard").each(function(){
             $(this).find("div.title a").each(function(){
                 $(this).css("color","#f79603");
-                globals.models.push($(this).attr("data-room"));
+                let model_name = $(this).attr("data-room");
+                globals.models.push(model_name);
+                let cam_state = globals.models_online[model_name].current_show;
+                let is_new = globals.models_online[model_name].is_new;
+                if(is_new){
+                    let private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
+                    private.appendTo($(this));
+                }
+                if(cam_state == "private"){
+                    let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
+                    private.appendTo($(this));
+                }
+                if(cam_state == "hidden"){
+                    let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
+                    private.appendTo($(this));
+                }
             });
             $(this).find("div.follow_star").each(function(){
               $(this).remove();
@@ -230,6 +296,25 @@ function applyToTemplate(holder, val){
                 let minutes = Math.floor(val.seconds_online/60);
                 this.innerHTML = minutes + " minutes";
             });
+            if(val.is_new){
+              let private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
+              new_template.find("div.title a").each(function(){
+                private.appendTo($(this));
+              })
+            }
+            if(val.current_show == "private"){
+              let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
+              new_template.find("div.title a").each(function(){
+                private.appendTo($(this));
+              })
+            }
+            if(val.current_show == "hidden"){
+              let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
+              new_template.find("div.title a").each(function(){
+                private.appendTo($(this));
+              })
+            }
+            //<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>
             //room_subject
             new_template.appendTo(holder);
 }
@@ -249,7 +334,7 @@ function pullDataFromFollowed(followed_element){
     return followed_object;
 }
 
-function populateFrame(){
+function populateFrame_old(){
     let filter_params = "";
     $.each(globals.filters, function(key, val){
         for (let i = 0; i < val.length; i++) {
@@ -264,6 +349,7 @@ function populateFrame(){
             globals.items[i].appendTo(holder);
         }
         $.each( data.results, function( key, val ) {
+            globals.models_online[val['username']] = val;
             if(!globals.models.includes(val['username'])){
                 applyToTemplate(holder, val);
             }
@@ -272,9 +358,37 @@ function populateFrame(){
     });
 }
 
+function populateFrame(){
+    let holder = $(globals.frame).find("#card_holder");
+    holder.html("");
+    for (let i = 0; i < globals.items.length; i++) {
+        globals.items[i].appendTo(holder);
+    }
+    $.each( globals.models_list, function( key, val ) {
+        globals.models_online[val['username']] = val;
+        if(!globals.models.includes(val['username'])){
+            applyToTemplate(holder, val);
+        }
+    });
+    toursPageNew()
+}
+
+
 function Dropped(event, ui) {
   let player = ui.item[0].querySelector('video')
-  if (player) player.play()
+  if (player){
+    player.play();
+    reOrderCams();
+  } 
+}
+
+function reOrderCams(){
+  globals.open_rooms = [];
+  $("#mainDiv").children().each(function(){
+    let model_name = $(this).attr("id");
+    globals.open_rooms.push(model_name);
+  });
+  updateCamStorage();
 }
 
 function blackSite() {
@@ -323,6 +437,13 @@ function toursPage() {
   globals.chat = new BroadcastChannel(playerID)
 }
 
+function openExistingCams(){
+  console.log("Existing Cams",globals.open_rooms);
+  for (var i=0; i<globals.open_rooms.length; i++) {
+    globals.chat.postMessage(`watch ` + globals.open_rooms[i]);
+  }
+}
+
 function toursPageNew() {
   document.body.style.padding = '0 8px'
   addMiniButtonsNew()
@@ -332,16 +453,45 @@ function toursPageNew() {
   globals.chat = new BroadcastChannel(playerID)
 }
 
+function checkIfModelOnline(model_name){
+  if(typeof globals.models_online[model_name] == "undefined"){
+    console.log(model_name + " is offline.");
+    removeModel(model_name);
+    return false;
+  }
+  if(globals.models_online[model_name].current_show == "private"){
+    console.log(model_name + " is in a private show.");
+    removeModel(model_name);
+    return false;
+  }
+  if(globals.models_online[model_name].current_show == "hidden"){
+    console.log(model_name + " is in a ticket show.");
+    removeModel(model_name);
+    return false;
+  }
+  return true;
+}
+
 function readMessage(msg) {
-  let cmd = msg.data.split(" ")
+  let cmd = msg.data.split(" ");
+  if(!checkIfModelOnline(cmd[1])){
+    return false;
+  }
   let check = document.body.querySelectorAll("div#mainDiv > div[name=\""+cmd[1]+"\"]")
-  let wins = document.querySelectorAll("div#mainDiv > div.free")
-  if (wins.length == 0 && !check.length) wins = addCamPlace()
+  //let wins = document.querySelectorAll("div#mainDiv > div.free")
+  let wins = document.querySelectorAll("div#mainDiv > div#empty")
+  if (wins.length == 0 && !check.length) wins = addCamPlace(cmd[1])
   if (cmd[0] == "watch" && cmd[1].length > 0 && wins.length > 0 && !check.length) {
-    globals.http.open('GET', `https://chaturbate.com/${cmd[1]}`, true)
-    globals.http.setRequestHeader("Content-type","application/x-www-form-urlencoded")
-    globals.http.onload = function() { addCam(globals.http.responseText, wins[0], cmd[1]) }
-    globals.http.send()
+    
+    wins[0].classList.remove('free');
+    $(wins[0]).attr("id", cmd[1]);
+    let request = new XMLHttpRequest();
+    request.open('GET', `https://chaturbate.com/${cmd[1]}`, true)
+    request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+    request.onload = function() { 
+      addCam(request.responseText, wins[0], cmd[1]) 
+    }
+    request.send()
   } else if (check.length) { console.log("already watching "+cmd[1]+"!") }
   else {
     //console.log("no free spots left!")
@@ -380,7 +530,7 @@ function cleanPage() {
   if (blogPosts.length > 0) blogPosts[0].remove();
 }
 
-function addCamPlace() {
+function addCamPlace(model_name) {
   let main = document.querySelector('div#mainDiv')
   let len = main.querySelectorAll('div.cam').length
   let loops = 0
@@ -399,10 +549,14 @@ function addCamPlace() {
   else if (len == 25) { loops = 5; mainClass = 'Cams30' }
   else if (len == 30) { loops = 5; mainClass = 'Cams35' }
 
-  for (let i =0; i < loops; i++) main.appendChild(camDiv())
-
+  for (let i =0; i < loops; i++){
+    let newCam = camDiv(model_name);
+    main.appendChild(newCam);
+  } 
+  let newCam = main.querySelectorAll("div.free");
   main.className = mainClass
-  return main.querySelectorAll("div.free")
+  //return main.querySelectorAll("div.free")
+  return newCam
 }
 
 function cleanCams() {
@@ -429,13 +583,14 @@ function cleanCams() {
   else if (len > 1) { loops = 2-len; mainClass = 'Cams2' }
   else if (!len) { loops = 1 }
 
-  for (let i =0; i < loops; i++) main.appendChild(camDiv())
+  for (let i =0; i < loops; i++) main.appendChild(camDiv("empty"))
   main.className = mainClass
 }
 
-function camDiv() {
+function camDiv(model_name) {
   let c = document.createElement('div')
   c.classList = 'cam ui-sortable-handle free'
+  c.setAttribute("id", model_name);
   c.appendChild(plusButton())
   return c
 }
@@ -560,7 +715,7 @@ function makeid(length) {
    return result;
 }
 
-function addCam(resp, div, model) {
+function addCam(resp, holder, model) {
   let pos1 = resp.search('https://edge')
   let pos2 = resp.search('.m3u8')+5
   let stream = ''
@@ -568,13 +723,18 @@ function addCam(resp, div, model) {
   else { stream = 'no data' }
   let poster = 'https://cbjpeg.stream.highwebmedia.com/stream?room='+model+'&f='+Math.random()
   let id = 'cam'+Math.floor(Math.random()*10000)
-  div.classList.remove('free')
-  div.setAttribute("name", model)
-  div.innerHTML = `<video style="width: 100%; height: 100%;" id="${id}" class="video-js" poster="${poster}">
+  //div.classList.remove('free')
+  var holder = document.getElementById(model);
+  holder.setAttribute("name", model)
+  holder.innerHTML = `<video style="width: 100%; height: 100%;" id="${id}" class="video-js" poster="${poster}">
                    <source src="${stream}" type=""application/x-mpegURL""></source></video>`
-  div.appendChild(topButtons(model))
+  holder.appendChild(topButtons(model))
   const player = videojs(id, { controls: true, autoplay: true, preload: 'auto', fluid: false, enableLowInitialPlaylist: true })
   player.volume(0.5)
+  if(!globals.open_rooms.includes(model)){
+    globals.open_rooms.push(model);
+  }
+  updateCamStorage();
 }
 
 function openInTab(div){
@@ -589,17 +749,29 @@ function refreshCam(div) {
   console.dir(div)
   let model_name = div.getAttribute("name")
   div.removeAttribute("name")
-  globals.http.open('GET', `https://chaturbate.com/${model_name}`, true)
-  globals.http.setRequestHeader("Content-type","application/x-www-form-urlencoded")
-  globals.http.onload = function() { addCam(globals.http.responseText, div, model_name) }
-  globals.http.send()
+  
+  let request = new XMLHttpRequest();
+  request.open('GET', `https://chaturbate.com/${model_name}`, true)
+  request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+  request.onload = function() { addCam(request.responseText, div, model_name) }
+  request.send()
 }
 
-function removeCam(div) {
+function removeModel(model){
+  if(globals.open_rooms.includes(model)){
+    //Remove Cam
+    let index = globals.open_rooms.indexOf(model);
+    let x = globals.open_rooms.splice(index, 1);
+    updateCamStorage();
+  }
+}
+
+function removeCam(div, model) {
   div.innerHTML = ''
   div.classList.add('free')
   div.removeAttribute("name")
   div.appendChild(plusButton())
+  removeModel(model);
   cleanCams()
 }
 
@@ -615,10 +787,11 @@ function plusButton() {
         if (user_data.includes('/') || user_data.includes('chaturbate.com')) {
           user_data = user_data.split('/').filter(Boolean).pop()
         }
-        globals.http.open('GET', `https://chaturbate.com/${user_data}`, true)
-        globals.http.setRequestHeader("Content-type","application/x-www-form-urlencoded")
-        globals.http.onload = function() { addCam(globals.http.responseText, e.composedPath()[1], user_data) }
-        globals.http.send()
+        let request = new XMLHttpRequest();
+        request.open('GET', `https://chaturbate.com/${user_data}`, true)
+        request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+        request.onload = function() { addCam(request.responseText, e.composedPath()[1], user_data) }
+        request.send()
       }
     })
   return b
@@ -651,9 +824,13 @@ function topButtons(name) {
   top.appendChild(x)
   x.addEventListener('click', e => {
     e.preventDefault()
-    removeCam(e.composedPath()[2])
+    removeCam(e.composedPath()[2], name)
   })
   return top
+}
+
+function updateCamStorage(){
+  GM_setValue("open_rooms", JSON.stringify(globals.open_rooms));
 }
 
 generalStuff()
