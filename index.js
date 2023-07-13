@@ -32,23 +32,6 @@ const globals = {};
 
 globals.template = $('<li class="room_list_room roomCard" style="cursor: pointer;"><a href="/blondefoxsilverfox/" target="_blank" data-room="blondefoxsilverfox" class="no_select"><img src="https://roomimg.stream.highwebmedia.com/riw/blondefoxsilverfox.jpg?1688693700" width="180" height="101" alt="blondefoxsilverfox\'s chat room" class="png room_thumbnail" onmouseenter="window[\'tsExec\'] &amp;&amp; tsExec(function(ts){ event &amp;&amp; ts.roomReload.startStreaming(\'blondefoxsilverfox\', event.currentTarget) })" onmouseleave="window[\'tsExec\'] &amp;&amp; tsExec(function(ts){ ts.roomReload.stopStreaming(\'blondefoxsilverfox\') })"></a><div class="details"><div class="title"><a target="_blank" href="/blondefoxsilverfox/" data-room="blondefoxsilverfox" style="cursor: pointer;"> blondefoxsilverfox</a><div class="age_gender_container"><span class="age">99</span><span class="genderc" title="Couple"></span></div></div><ul class="subject"><li title="Girl Top off at goal!">girl top off at goal!</li></ul><ul class="sub-info"><li class="location">United States</li><li class="cams"><span class="time">24 mins</span><span class="comma">, </span><span class="viewers">3464 viewers</span></li></ul></div><div style="top: 2px; left: 2px; position: absolute; cursor: pointer;"><div name="blondefoxsilverfox">⛔</div></div></li>');
 
-//unsafeWindow.myScript = this;
-
-// function getIP(){
-//   window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;  
-// 	var pc = new RTCPeerConnection({iceServers:[]}), 
-// 	noop = function(){}; 
-     
-//    	pc.createDataChannel("");  
-// 	pc.createOffer(pc.setLocalDescription.bind(pc), noop);   
-//     	pc.onicecandidate = function(ice){ 
-//    	if(!ice || !ice.candidate || !ice.candidate.candidate)  return;
-
-//         	var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/.exec(ice.candidate.candidate)[1];
-
-        
-// 	console.log(myIP);
-// }
 
 function generalStuff() {
   //console.log(unsafeWindow);
