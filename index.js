@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.0.4
+// @version      2.0.5
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -184,6 +184,9 @@ function checkForFollowed(){
             $(this).find("div.title a").each(function(){
                 $(this).css("color","#f79603");
                 globals.models.push($(this).attr("data-room"));
+            });
+            $(this).find("div.follow_star").each(function(){
+              $(this).remove();
             });
             $(this).css("borderColor","#f79603");
             globals.items.push($(this));
