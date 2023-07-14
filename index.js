@@ -247,6 +247,7 @@ function checkForFollowed(){
                 $(this).css("color","#f79603");
                 let model_name = $(this).attr("data-room");
                 globals.models.push(model_name);
+                console.log("model_name",model_name)
                 let cam_state = globals.models_online[model_name].current_show;
                 let is_new = globals.models_online[model_name].is_new;
                 if(is_new){
