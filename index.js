@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.1.4
+// @version      2.1.5
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -96,6 +96,7 @@ function camsSite() {
 
   document.title = 'CBPlus Cams'
   let head = document.getElementById("header")
+  //section
   $("#base").html("");
   //document.body.innerHTML = "";
   document.body.style.height = '100vh'
@@ -156,7 +157,9 @@ function camsSite() {
   let hideMenu = document.createElement("li");
   hideMenu.innerHTML = `<a style="color: gold;">        HIDE/SHOW LIST</a>`;
   hideMenu.style.cursor = 'pointer'
-  hideMenu.onclick = function () { $('div#rightMenuHolder').toggle(1000) }
+  hideMenu.onclick = function () {
+      hideMenus();
+  }
   document.getElementById("nav").appendChild(hideMenu);
 
   let frame2 = $('<div align="center" style="clear:both; margin: 10px auto; position:absolute;"></div>');
@@ -198,6 +201,11 @@ function camsSite() {
    globals.chat.onmessage = readMessage;
    setTimeout(openExistingCams, 1000);
   //openExistingCams();
+}
+
+function hideMenus(){
+  $("#header .section").toggle(1000)
+  $('div#rightMenuHolder').toggle(1000)
 }
 
 function bindEvents(){
