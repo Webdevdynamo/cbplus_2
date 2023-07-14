@@ -852,22 +852,29 @@ function updateCamStorage(){
 }
 
 function getChatPage(model_name){
-  return false;
-  let request = new XMLHttpRequest();
-  request.open('GET', `https://chaturbate.com/${model_name}`, true)
-  request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
-  request.onload = function() { 
-    isolateChat(request.responseText) 
+  let div_iframe = $("<div></div>");
+  $("#rightMenuHolder").append(div_iframe);
+
+  div_iframe.attr("id", "chat_holder");
+  let url = 'https://chaturbate.com/in/?tour=SHBY&campaign=yD0Pt&track=embed&room='+model_name;
+  let iframe = $('<iframe id="iframe-pdf" class="iframe-pdf" width="100%" height="800" frameborder="0"></iframe>');
+  div_iframe.hide();
+  div_iframe.append(iframe);
+
+  function revealChat(){
+    let chat_holder = iframe.contents().find("#ChatTabContents");
+    let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
+    iframe.contents().find("body").html(chat_window);
+    
+    div_iframe.show();
   }
-  request.send()
+
+  iframe.on("load", function() {
+    let myTimeout = setTimeout(revealChat, 1000);
+  });
+  iframe.attr('src', url);
+
+  return false
 }
 
-function isolateChat(html_code){
-  let html_page = $(html_code);
-  let chat_holder = html_page.find("#ChatTabContents");
-  let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
-  //$("body").html("");
-  //$("body").append(chat_window);
-}
-
-generalStuff()
+generalStuff();
