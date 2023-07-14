@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.1.8
+// @version      2.2
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -161,7 +161,17 @@ function camsSite() {
   hideMenu.onclick = function () {
       hideMenus();
   }
+  
+
+  let hideChat = document.createElement("li");
+  hideChat.innerHTML = `<a style="color: gold;">        HIDE/SHOW CHAT</a>`;
+  hideChat.style.cursor = 'pointer'
+  hideChat.onclick = function () {
+      hideChatColumn();
+  }
+
   document.getElementById("nav").appendChild(hideMenu);
+  document.getElementById("nav").appendChild(hideChat);
 
   let frame2 = $('<div align="center" style="clear:both; margin: 10px auto; position:absolute;"></div>');
 
@@ -198,7 +208,7 @@ function camsSite() {
   let chatLoader = document.createElement("div")
   chatLoader.setAttribute("id", "chatLoader");
   chatLoader.style.width = "100%";
-  chatLoader.style.height = "50px";
+  chatLoader.style.height = "100%";
   chatLoader.style.position = "absolute";
   chatLoader.style.color = "#fff";
   chatLoader.style.backgroundColor = "#f47321";
@@ -221,6 +231,8 @@ function camsSite() {
   rightMenuHolder.appendChild(filter_element_holder)
   rightMenuHolder.appendChild(rightMenu)
   document.body.appendChild(body_main)
+
+  unloadChat();
    if(newVersion){
         getXMLModelList();
        let myInterval = setInterval(getXMLModelList, 10000);
@@ -241,6 +253,10 @@ function camsSite() {
 function hideMenus(){
   $("#header .section").toggle(1000)
   $('div#rightMenuHolder').toggle(1000)
+}
+
+function hideChatColumn(){
+  $('#chatParent').toggle(500)
 }
 
 function bindEvents(){
@@ -430,15 +446,38 @@ function Dropped(event, ui) {
   } 
 }
 
+function unloadChat(){
+  $("#chatLabel").html("Choose a model");
+  $("#chatLoader").animate({height:"100%"},200);
+  $("#chatHolder").html("");
+}
+
+function changeToMainWindowChat(){
+  let i = 0;
+  //console.log("OPEN ROOMS", globals.open_rooms);
+  $("#mainDiv").children().each(function(){
+    let model_name = $(this).attr("id");
+    //console.log("NEW CHAT", model_name);
+    if(typeof model_name == "undefined"){
+      unloadChat();
+      return false;
+    }else if(model_name == "empty"){
+      unloadChat();
+      return false;
+    }
+      if(i<1){
+          getChatPage(model_name);
+      }
+      i++;
+  });
+}
+
 function reOrderCams(){
   globals.open_rooms = [];
     let i = 0;
   $("#mainDiv").children().each(function(){
     let model_name = $(this).attr("id");
-    globals.open_rooms.push(model_name);
-      if(i<1){
-          //getChatPage(model_name);
-      }
+      globals.open_rooms.push(model_name);
       i++;
   });
   updateCamStorage();
@@ -525,11 +564,21 @@ function checkIfModelOnline(model_name){
   return true;
 }
 
+function getOpenCamCount(){
+  return document.querySelectorAll("div#mainDiv div.free").length;
+}
+
 function readMessage(msg) {
   let cmd = msg.data.split(" ");
   if(!checkIfModelOnline(cmd[1])){
     return false;
   }
+
+  let firstCam = false;
+  if(getOpenCamCount() == 1){
+    firstCam = true;
+  }
+
   let check = document.body.querySelectorAll("div#mainDiv > div[name=\""+cmd[1]+"\"]")
   //let wins = document.querySelectorAll("div#mainDiv > div.free")
   let wins = document.querySelectorAll("div#mainDiv > div#empty")
@@ -543,6 +592,10 @@ function readMessage(msg) {
     request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
     request.onload = function() { 
       addCam(request.responseText, wins[0], cmd[1]) 
+      
+      if(firstCam){
+        getChatPage(cmd[1]);
+      }
     }
     request.send()
   } else if (check.length) { console.log("already watching "+cmd[1]+"!") }
@@ -614,13 +667,18 @@ function addCamPlace(model_name) {
 
 function cleanCams() {
   let main = document.querySelector('div#mainDiv')
-  let cams = main.querySelectorAll("div.free")
+  //let cams = main.querySelectorAll("div.free")
+  let free_cams = document.querySelectorAll("div#mainDiv > div.free")
+  let active_cams = document.querySelectorAll("div#mainDiv > div:not(.free)")
   let loops = 0
 
-  for (let i =0; i < cams.length; i++) main.removeChild(cams[i])
+  for (let i =0; i < free_cams.length; i++) main.removeChild(free_cams[i])
 
-  let len = main.querySelectorAll('div.cam').length
+  let len = active_cams.length
 
+  //console.log("loops", loops)
+  //console.log("active_cams", len)
+  
   let mainClass = 'oneCam'
   if (len > 30) { loops = 35-len; mainClass = 'Cams35' }
   else if (len > 25) { loops = 33-len; mainClass = 'Cams30' }
@@ -826,6 +884,12 @@ function removeCam(div, model) {
   div.appendChild(plusButton())
   removeModel(model);
   cleanCams()
+  //console.log("REMOVE CHAT", model);
+  //console.log("CURRENT CHAT", globals.current_chat);
+  if(globals.current_chat == model){
+    globals.current_chat = "";
+    changeToMainWindowChat();
+  }
 }
 
 function plusButton() {
@@ -840,11 +904,7 @@ function plusButton() {
         if (user_data.includes('/') || user_data.includes('chaturbate.com')) {
           user_data = user_data.split('/').filter(Boolean).pop()
         }
-        let request = new XMLHttpRequest();
-        request.open('GET', `https://chaturbate.com/${user_data}`, true)
-        request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
-        request.onload = function() { addCam(request.responseText, e.composedPath()[1], user_data) }
-        request.send()
+        globals.chat.postMessage(`watch ` + user_data);
       }
     })
   return b
@@ -864,7 +924,14 @@ function topButtons(name) {
   let x = document.createElement('button')
   x.innerHTML = '❌'
   x.classList.add('topButton')
+  
+  let c = document.createElement('button')
+  c.innerHTML = '💬'
+  c.title = 'Load Chat'
+  c.classList.add('topButton')
+
   top.appendChild(n)
+  top.appendChild(c)
   top.appendChild(r)
   n.addEventListener('click', e => {
     e.preventDefault()
@@ -874,6 +941,13 @@ function topButtons(name) {
     e.preventDefault()
     refreshCam(e.composedPath()[2], name)
   })
+  
+  c.addEventListener('click', e => {
+    e.preventDefault()
+    getChatPage(name);
+    //refreshCam(e.composedPath()[2], name)
+  })
+
   top.appendChild(x)
   x.addEventListener('click', e => {
     e.preventDefault()
@@ -883,7 +957,6 @@ function topButtons(name) {
 }
 
 function updateCamStorage(){
-  getChatPage(globals.open_rooms[0]);
   GM_setValue("open_rooms", JSON.stringify(globals.open_rooms));
 }
 
@@ -891,13 +964,16 @@ function getChatPage(model_name){
   if(model_name == globals.current_chat){
     return false;
   }
+  $(".activeChat").removeClass("activeChat");
+  $("#"+model_name).addClass("activeChat");
+  $("#chatLabel").html("Loading " + model_name + "'s Chat...");
   $("#chatLoader").animate({height:"100%"},500);
   globals.current_chat = model_name;
   let div_iframe = $("#chatHolder");
   //$("#rightMenuHolder").append(div_iframe);
 
   let url = 'https://chaturbate.com/in/?tour=SHBY&campaign=yD0Pt&track=embed&room='+model_name;
-  let iframe = $('<iframe id="iframe-pdf" class="iframe-pdf" width="100%" height="800" frameborder="0"></iframe>');
+  let iframe = $('<iframe id="iframe-pdf" scrolling="no" class="iframe-pdf" frameborder="0"></iframe>');
   iframe.css("height", "calc(100% - 5px - 50px)"); 
   iframe.css("padding-top", "50px"); 
   //div_iframe.hide();
@@ -905,14 +981,28 @@ function getChatPage(model_name){
   div_iframe.append(iframe);
 
   function revealChat(){
-    let chat_holder = iframe.contents().find("#ChatTabContents");
-    let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
-    iframe.contents().find("body").html(chat_window);
+    //let chat_holder = iframe.contents().find("#ChatTabContents");
+    let chat_window = iframe.contents().find("#ChatTabContents").detach();
+    let chat_input = chat_window.find(".inputDiv").detach();
+    //let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
+    iframe.contents().find("body").html("");
+    iframe.contents().find("body").append(chat_window);
+    iframe.contents().find("body").append(chat_input);
+    chat_window = iframe.contents().find("#ChatTabContents");
+    //chat_window.style.height = "calc(100% - 28px)";
+    chat_window.css("height", "calc(100% - 28px)");
+    chat_window.css("position", "absolute");
+
+    chat_input.css("position", "absolute");
+    chat_input.css("bottom", "-5px");
+    chat_input.css("width", "calc(100% - 5px)");
     
+    $("#chatLabel").html(model_name + "'s Chat");
     $("#chatLoader").animate({height:"50px"},500);
   }
 
   iframe.on("load", function() {
+    //console.log("AFTER LOAD ROOMS", globals.open_rooms);
     let myTimeout = setTimeout(revealChat, 1000);
   });
   iframe.attr('src', url);
