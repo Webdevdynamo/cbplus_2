@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.1.7
+// @version      2.1.8
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -247,20 +247,21 @@ function checkForFollowed(){
                 $(this).css("color","#f79603");
                 let model_name = $(this).attr("data-room");
                 globals.models.push(model_name);
-                console.log("model_name",model_name)
-                let cam_state = globals.models_online[model_name].current_show;
-                let is_new = globals.models_online[model_name].is_new;
-                if(is_new){
-                    let private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
-                    private.appendTo($(this));
-                }
-                if(cam_state == "private"){
-                    let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
-                    private.appendTo($(this));
-                }
-                if(cam_state == "hidden"){
-                    let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
-                    private.appendTo($(this));
+                if(typeof globals.models_online[model_name] != "undefined"){
+                    let cam_state = globals.models_online[model_name].current_show;
+                    let is_new = globals.models_online[model_name].is_new;
+                    if(is_new){
+                        let private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
+                        private.appendTo($(this));
+                    }
+                    if(cam_state == "private"){
+                        let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
+                        private.appendTo($(this));
+                    }
+                    if(cam_state == "hidden"){
+                        let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
+                        private.appendTo($(this));
+                    }
                 }
             });
             $(this).find("div.follow_star").each(function(){
@@ -396,9 +397,14 @@ function Dropped(event, ui) {
 
 function reOrderCams(){
   globals.open_rooms = [];
+    let i = 0;
   $("#mainDiv").children().each(function(){
     let model_name = $(this).attr("id");
     globals.open_rooms.push(model_name);
+      if(i<1){
+          getChatPage(model_name);
+      }
+      i++;
   });
   updateCamStorage();
 }
@@ -572,7 +578,6 @@ function addCamPlace(model_name) {
 }
 
 function cleanCams() {
-  getChatPage(globals.models_list[0]);
   let main = document.querySelector('div#mainDiv')
   let cams = main.querySelectorAll("div.free")
   let loops = 0
@@ -847,6 +852,7 @@ function updateCamStorage(){
 }
 
 function getChatPage(model_name){
+  return false;
   let request = new XMLHttpRequest();
   request.open('GET', `https://chaturbate.com/${model_name}`, true)
   request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
@@ -860,8 +866,8 @@ function isolateChat(html_code){
   let html_page = $(html_code);
   let chat_holder = html_page.find("#ChatTabContents");
   let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
-  $("body").html("");
-  $("body").append(chat_window);
+  //$("body").html("");
+  //$("body").append(chat_window);
 }
 
 generalStuff()
