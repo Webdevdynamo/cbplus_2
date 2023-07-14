@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.1.6
+// @version      2.1.7
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -856,8 +856,8 @@ function getChatPage(model_name){
   request.send()
 }
 
-function isolateChat(html_page){
-  let html_page = $(html_page);
+function isolateChat(html_code){
+  let html_page = $(html_code);
   let chat_holder = html_page.find("#ChatTabContents");
   let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
   $("body").html("");
