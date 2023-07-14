@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2
+// @version      2.2.1
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -241,7 +241,7 @@ function camsSite() {
   $('div#mainDiv').sortable({
     tolerance: "pointer",
     revert: true,
-    cancel: ".vjs-volume-control",
+    cancel: ".vjs-volume-control, .topFrame",
     stop: function (event, ui) { Dropped(event, ui) }
   })
    bindEvents();
