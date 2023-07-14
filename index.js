@@ -571,6 +571,7 @@ function addCamPlace(model_name) {
 }
 
 function cleanCams() {
+  getChatPage(globals.models_list[0]);
   let main = document.querySelector('div#mainDiv')
   let cams = main.querySelectorAll("div.free")
   let loops = 0
@@ -842,6 +843,24 @@ function topButtons(name) {
 
 function updateCamStorage(){
   GM_setValue("open_rooms", JSON.stringify(globals.open_rooms));
+}
+
+function getChatPage(model_name){
+  let request = new XMLHttpRequest();
+  request.open('GET', `https://chaturbate.com/${model_name}`, true)
+  request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
+  request.onload = function() { 
+    isolateChat(request.responseText) 
+  }
+  request.send()
+}
+
+function isolateChat(html_page){
+  let html_page = $(html_page);
+  let chat_holder = html_page.find("#ChatTabContents");
+  let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
+  $("body").html("");
+  $("body").append(chat_window);
 }
 
 generalStuff()
