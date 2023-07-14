@@ -126,3 +126,11 @@ div.video-js {
 	background-color: inherit;
 	background-image: inherit;
 }
+
+#chatLabel{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}

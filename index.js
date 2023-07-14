@@ -58,6 +58,7 @@ function generalStuff() {
   globals.models = [];
   globals.models_online = {};
   globals.models_list = [];
+  globals.current_chat = null;
   globals.filters = {
         "gender": ["f","c"],
         "region": ["northamerica"],
@@ -123,7 +124,7 @@ function camsSite() {
   rightMenu.style.top = "0"
   rightMenu.style.bottom = "0"
   rightMenu.style.right = "0"
-  rightMenu.style.width = "600px"
+  rightMenu.style.width = "100%"
   rightMenu.style.height = "95%"
   //rightMenu.style.display = 'flex'
   //rightMenu.style.display = 'block'
@@ -178,10 +179,44 @@ function camsSite() {
   let rightMenuHolder = document.createElement("div")
   rightMenuHolder.setAttribute("id", "rightMenuHolder");
   rightMenuHolder.style.position = "relative";
+  rightMenuHolder.style.width = "405px";
+
+  let chatParent = document.createElement("div")
+  chatParent.setAttribute("id", "chatParent");
+  chatParent.style.position = "relative";
+
+  
+  let chatLabel = document.createElement("div")
+  chatLabel.setAttribute("id", "chatLabel");
+  chatLabel.innerHTML = "CHAT LABEL";
+  // chatLabel.style.height = "50px";
+  // chatLabel.style.position = "absolute";
+  // chatLabel.style.backgroundColor = "red";
+  // chatLabel.style.top = "0px";
+  
+  
+  let chatLoader = document.createElement("div")
+  chatLoader.setAttribute("id", "chatLoader");
+  chatLoader.style.width = "100%";
+  chatLoader.style.height = "50px";
+  chatLoader.style.position = "absolute";
+  chatLoader.style.color = "#fff";
+  chatLoader.style.backgroundColor = "#f47321";
+  chatLoader.style.top = "0px";
+  chatLoader.appendChild(chatLabel)
+
+  let chatHolder = document.createElement("div")
+  chatHolder.setAttribute("id", "chatHolder");
+  chatHolder.style.width = "300px";
+  chatHolder.style.height = "100%";
+  chatParent.appendChild(chatHolder)
+  chatParent.appendChild(chatLoader)
+  frame2.appendChild(chatParent)
 
   frame2.appendChild(frame3)
   rightMenu.appendChild(globals.frame)
   body_main.appendChild(main)
+  body_main.appendChild(chatParent)
   body_main.appendChild(rightMenuHolder)
   rightMenuHolder.appendChild(filter_element_holder)
   rightMenuHolder.appendChild(rightMenu)
@@ -402,7 +437,7 @@ function reOrderCams(){
     let model_name = $(this).attr("id");
     globals.open_rooms.push(model_name);
       if(i<1){
-          getChatPage(model_name);
+          //getChatPage(model_name);
       }
       i++;
   });
@@ -848,17 +883,25 @@ function topButtons(name) {
 }
 
 function updateCamStorage(){
+  getChatPage(globals.open_rooms[0]);
   GM_setValue("open_rooms", JSON.stringify(globals.open_rooms));
 }
 
 function getChatPage(model_name){
-  let div_iframe = $("<div></div>");
-  $("#rightMenuHolder").append(div_iframe);
+  if(model_name == globals.current_chat){
+    return false;
+  }
+  $("#chatLoader").animate({height:"100%"},500);
+  globals.current_chat = model_name;
+  let div_iframe = $("#chatHolder");
+  //$("#rightMenuHolder").append(div_iframe);
 
-  div_iframe.attr("id", "chat_holder");
   let url = 'https://chaturbate.com/in/?tour=SHBY&campaign=yD0Pt&track=embed&room='+model_name;
   let iframe = $('<iframe id="iframe-pdf" class="iframe-pdf" width="100%" height="800" frameborder="0"></iframe>');
-  div_iframe.hide();
+  iframe.css("height", "calc(100% - 5px - 50px)"); 
+  iframe.css("padding-top", "50px"); 
+  //div_iframe.hide();
+  div_iframe.html("");
   div_iframe.append(iframe);
 
   function revealChat(){
@@ -866,7 +909,7 @@ function getChatPage(model_name){
     let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
     iframe.contents().find("body").html(chat_window);
     
-    div_iframe.show();
+    $("#chatLoader").animate({height:"50px"},500);
   }
 
   iframe.on("load", function() {
