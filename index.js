@@ -982,7 +982,7 @@ function getChatPage(model_name){
 
   function revealChat(){
     //let chat_holder = iframe.contents().find("#ChatTabContents");
-    let chat_window = iframe.contents().find("#ChatTabContents").detach();
+    let chat_window = iframe.contents().find(".TheatermodeChatDivChat").detach();
     let chat_input = chat_window.find(".inputDiv").detach();
     //let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
     iframe.contents().find("body").html("");
