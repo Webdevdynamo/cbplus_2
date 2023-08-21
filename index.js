@@ -981,14 +981,15 @@ function getChatPage(model_name){
   div_iframe.append(iframe);
 
   function revealChat(){
-    //let chat_holder = iframe.contents().find("#ChatTabContents");
-    let chat_window = iframe.contents().find(".TheatermodeChatDivChat").detach();
+     let chat_identifier = ".TheatermodeChatDivChat";
+    //let chat_holder = iframe.contents().find(chat_identifier);
+    let chat_window = iframe.contents().find(chat_identifier).detach();
     let chat_input = chat_window.find(".inputDiv").detach();
     //let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
     iframe.contents().find("body").html("");
     iframe.contents().find("body").append(chat_window);
     iframe.contents().find("body").append(chat_input);
-    chat_window = iframe.contents().find("#ChatTabContents");
+    chat_window = iframe.contents().find(chat_identifier);
     //chat_window.style.height = "calc(100% - 28px)";
     chat_window.css("height", "calc(100% - 28px)");
     chat_window.css("position", "absolute");
@@ -996,13 +997,13 @@ function getChatPage(model_name){
     chat_input.css("position", "absolute");
     chat_input.css("bottom", "-5px");
     chat_input.css("width", "calc(100% - 5px)");
-    
+
     $("#chatLabel").html(model_name + "'s Chat");
     $("#chatLoader").animate({height:"50px"},500);
   }
 
   iframe.on("load", function() {
-    //console.log("AFTER LOAD ROOMS", globals.open_rooms);
+    console.log("AFTER LOAD ROOMS", globals.open_rooms);
     let myTimeout = setTimeout(revealChat, 1000);
   });
   iframe.attr('src', url);
