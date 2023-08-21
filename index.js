@@ -981,7 +981,9 @@ function getChatPage(model_name){
   div_iframe.append(iframe);
 
   function revealChat(){
+      let video_holder = ".videoPlayerDiv";
      let chat_identifier = ".TheatermodeChatDivChat";
+    iframe.contents().find(chat_identifier).remove(video_holder);
     //let chat_holder = iframe.contents().find(chat_identifier);
     let chat_window = iframe.contents().find(chat_identifier).detach();
     let chat_input = chat_window.find(".inputDiv").detach();
