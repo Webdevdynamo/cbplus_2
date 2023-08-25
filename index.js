@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.2
+// @version      2.2.3
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -976,6 +976,7 @@ function getChatPage(model_name){
   let iframe = $('<iframe id="iframe-pdf" scrolling="no" class="iframe-pdf" frameborder="0"></iframe>');
   iframe.css("height", "calc(100% - 5px - 50px)"); 
   iframe.css("padding-top", "50px"); 
+  console.log(url);
   //div_iframe.hide();
   div_iframe.html("");
   div_iframe.append(iframe);
@@ -983,7 +984,8 @@ function getChatPage(model_name){
   function revealChat(){
       let video_holder = ".videoPlayerDiv";
      let chat_identifier = ".TheatermodeChatDivChat";
-    iframe.contents().find(chat_identifier).remove(video_holder);
+     iframe.contents().remove(video_holder);
+    iframe.contents().find(chat_identifier);
     //let chat_holder = iframe.contents().find(chat_identifier);
     let chat_window = iframe.contents().find(chat_identifier).detach();
     let chat_input = chat_window.find(".inputDiv").detach();
