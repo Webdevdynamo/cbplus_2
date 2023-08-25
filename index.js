@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.4
+// @version      2.2.5
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -246,7 +246,7 @@ function camsSite() {
    bindEvents();
    globals.chat.onmessage = readMessage;
    hideHeader();
-  //openExistingCams();
+  openExistingCams();
 }
 
 function hideHeader(){
