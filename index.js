@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.5
+// @version      2.2.6
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -70,7 +70,7 @@ function generalStuff() {
   }else if (globals.path == globals.blackPath){
       blackSite()
   }else if (globals.path == globals.toursPath){
-      toursPage()
+      toursPageNew()
   }
 
 }
@@ -244,9 +244,18 @@ function camsSite() {
     stop: function (event, ui) { Dropped(event, ui) }
   })
    bindEvents();
-   globals.chat.onmessage = readMessage;
    hideHeader();
-  openExistingCams();
+
+   globals.chat.onmessage = readMessage;
+   setTimeout(function(){ openExistingCams();}, 1000);
+   //openExistingCams();
+}
+
+function openExistingCams(){
+  console.log("Existing Cams",globals.open_rooms);
+  for (var i=0; i<globals.open_rooms.length; i++) {
+    globals.chat.postMessage('watch ' + globals.open_rooms[i]);
+  }
 }
 
 function hideHeader(){
@@ -537,13 +546,6 @@ function toursPage() {
   globals.chat = new BroadcastChannel(playerID)
 }
 
-function openExistingCams(){
-  console.log("Existing Cams",globals.open_rooms);
-  for (var i=0; i<globals.open_rooms.length; i++) {
-    globals.chat.postMessage(`watch ` + globals.open_rooms[i]);
-  }
-}
-
 function toursPageNew() {
   document.body.style.padding = '0 0'
   addMiniButtonsNew()
@@ -577,11 +579,11 @@ function getOpenCamCount(){
 }
 
 function readMessage(msg) {
+  console.log(msg);
   let cmd = msg.data.split(" ");
   if(!checkIfModelOnline(cmd[1])){
     return false;
   }
-
   let firstCam = false;
   if(getOpenCamCount() == 1){
     firstCam = true;
