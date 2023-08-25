@@ -86,9 +86,11 @@
 	justify-content: center;
 	position: relative;
 	background-color: #0C6A93;
-	border: 1px solid #F47321;
+	/*border: 1px solid #F47321;*/
 }
-
+#rightMenuHolder{
+	border-left: 1px solid #9b9b9b;
+}
 .plusButton {
 	border-radius: 50%;
 	background-color: #F47321;
@@ -147,4 +149,97 @@ div.video-js {
 
 .activeChat{
 	border: 3px solid lime;
+}
+#user_information {
+    display: inline-block;
+    width: auto;
+    min-width: 247px;
+    z-index: 100;
+    text-align: left;
+    /*border-style: solid;
+    border-width: 1px 1px 0;
+    border-radius: 4px 4px 0 0;*/
+    font-size: 11px;
+    position: relative;
+    box-sizing: border-box;
+	width: 100%;
+	margin-right: 0px !important;
+}
+#user_information .user_information_header_username {
+    display: inline-block;
+    font-family: ubuntubold,Helvetica,Arial,sans-serif;
+    font-size: 12px;
+    position: relative;
+    margin: 0 2px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom;
+    line-height: 17px;
+    cursor: pointer;
+}
+#user_information .user_information_header_username {
+    color: #fff;
+}
+#user_information .user_information_header {
+    padding: 3px 0 4px;
+    height: 17px;
+    width: 100%;
+    /*border-radius: 2px 2px 0 0;*/
+}
+#user_information .user_information_header {
+    background-color: #0c6a93;
+}
+#user_information .user_information_header .user_information_container {
+    display: inline-block;
+    cursor: pointer;
+}
+#user_information .notification_bell {
+    margin-right: 6px;
+}
+#user_information .user_information_icon {
+    border: none;
+    cursor: pointer;
+    float: right;
+    height: 16px;
+    width: 13px;
+}
+#user_information .notification_bell {
+    background-image: url(../../images/bell_inactive.svg?b7c610114958);
+}
+#user_information .user_information_icon {
+    background: center/contain no-repeat;
+}
+#user_information .userInfoDropdownHighlightColor {
+    background-color: transparent;
+}
+#user_information .userInfoDropdownTextColor {
+    color: #fff;
+}
+#user_information a {
+    cursor: pointer;
+}
+#user_information table th, #user_information table td, #user_information a {
+    font: 11px ubuntumedium,Arial,Helvetica,sans-serif;
+    text-align: left;
+}
+#user_information .userInfoDropdownBgColor {
+    background-color: #3c87ba;
+}
+#userInfoPanelMenuDropdownRoot #UserMenuDropDown {
+    border-color: #2c6990;
+}
+#user_information .bottom {
+    height: 42px;
+    padding: 4px 4px 4px 0;
+}
+#user_information .bottom, #filter_menu {
+    background-color: #e9e9e9;
+}
+#user_information table th, #user_information table td {
+    padding: 2px 0 2px 5px;
+}
+.nav-bar{
+	border-bottom: none;
 }

@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.3
+// @version      2.2.4
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -125,7 +125,7 @@ function camsSite() {
   rightMenu.style.bottom = "0"
   rightMenu.style.right = "0"
   rightMenu.style.width = "100%"
-  rightMenu.style.height = "95%"
+  rightMenu.style.height = "calc(100% - 100px)"
   //rightMenu.style.display = 'flex'
   //rightMenu.style.display = 'block'
   rightMenu.style.position = 'relative'
@@ -135,16 +135,15 @@ function camsSite() {
   filter_element_holder.style.position = "relative";
   filter_element_holder.style.zIndex = "1";
   filter_element_holder.style.width = "100%";
-  filter_element_holder.style.height = "5%";
+  filter_element_holder.style.height = "100px";
   //filter_element.style.padding = "10px"
 
   let filter_element = document.createElement("div");
   //filter_element.style.padding = "10px";
   filter_element.style.borderBottom = "1px solid #f47321";
-  filter_element.style.backgroundColor = "#fff";
   filter_element.style.height = "100%";
   filter_element.setAttribute("id", "filter_menu")
-    filter_element.innerHTML = "<input class='filter_check' type='checkbox' data-filter='gender' value='f' checked/> Female  &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='m' /> Male   &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='c' checked /> Couple    &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='s' /> Trans";
+    filter_element.innerHTML = "<div id='filter_holder'><input class='filter_check' type='checkbox' data-filter='gender' value='f' checked/> Female  &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='m' /> Male   &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='c' checked /> Couple    &nbsp;&nbsp;&nbsp;<input class='filter_check' type='checkbox' data-filter='gender' value='s' /> Trans</div>";
   filter_element_holder.appendChild(filter_element)
 
 
@@ -246,12 +245,21 @@ function camsSite() {
   })
    bindEvents();
    globals.chat.onmessage = readMessage;
-   setTimeout(openExistingCams, 1000);
+   hideHeader();
   //openExistingCams();
 }
 
+function hideHeader(){
+  var user_info = $("#user_information").detach();
+  user_info.prependTo($("#filter_menu"));
+  user_info
+  .css("margin", "0px")
+  .css("line-height", "normal");
+  $("#header .section").toggle(1000);
+}
+
 function hideMenus(){
-  $("#header .section").toggle(1000)
+  //$("#header .section").toggle(1000)
   $('div#rightMenuHolder').toggle(1000)
 }
 
@@ -1000,7 +1008,7 @@ function getChatPage(model_name){
 
     chat_input.css("position", "absolute");
     chat_input.css("bottom", "-5px");
-    chat_input.css("width", "calc(100% - 5px)");
+    chat_input.css("width", "calc(100% - 10px)");
 
     $("#chatLabel").html(model_name + "'s Chat");
     $("#chatLoader").animate({height:"50px"},500);
