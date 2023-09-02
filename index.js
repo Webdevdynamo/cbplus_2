@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.6
+// @version      2.2.7
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -557,9 +557,9 @@ function toursPageNew() {
 
 function checkIfModelOnline(model_name){
   if(typeof globals.models_online[model_name] == "undefined"){
-    console.log(model_name + " is offline.");
-    removeModel(model_name);
-    return false;
+    //console.log(model_name + " is offline.");
+    //removeModel(model_name);
+    //return false;
   }
   if(globals.models_online[model_name].current_show == "private"){
     console.log(model_name + " is in a private show.");
@@ -1018,7 +1018,7 @@ function getChatPage(model_name){
 
   iframe.on("load", function() {
     console.log("AFTER LOAD ROOMS", globals.open_rooms);
-    let myTimeout = setTimeout(revealChat, 1000);
+    let myTimeout = setTimeout(revealChat, 5000);
   });
   iframe.attr('src', url);
 
