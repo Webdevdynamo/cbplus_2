@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.8
+// @version      2.2.9
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -41,7 +41,7 @@ function generalStuff() {
 
   addTabs()
   cleanPage()
-  
+
   let open_rooms = GM_getValue("open_rooms");
   if(typeof open_rooms == "undefined"){
     globals.open_rooms = [];
@@ -160,7 +160,7 @@ function camsSite() {
   hideMenu.onclick = function () {
       hideMenus();
   }
-  
+
 
   let hideChat = document.createElement("li");
   hideChat.innerHTML = `<a style="color: gold;">        HIDE/SHOW CHAT</a>`;
@@ -184,7 +184,7 @@ function camsSite() {
    }else{
        globals.frame = frame;
    }
-   
+
   let rightMenuHolder = document.createElement("div")
   rightMenuHolder.setAttribute("id", "rightMenuHolder");
   rightMenuHolder.style.position = "relative";
@@ -194,7 +194,7 @@ function camsSite() {
   chatParent.setAttribute("id", "chatParent");
   chatParent.style.position = "relative";
 
-  
+
   let chatLabel = document.createElement("div")
   chatLabel.setAttribute("id", "chatLabel");
   chatLabel.innerHTML = "CHAT LABEL";
@@ -202,8 +202,8 @@ function camsSite() {
   // chatLabel.style.position = "absolute";
   // chatLabel.style.backgroundColor = "red";
   // chatLabel.style.top = "0px";
-  
-  
+
+
   let chatLoader = document.createElement("div")
   chatLoader.setAttribute("id", "chatLoader");
   chatLoader.style.width = "100%";
@@ -461,7 +461,7 @@ function Dropped(event, ui) {
   if (player){
     player.play();
     reOrderCams();
-  } 
+  }
 }
 
 function unloadChat(){
@@ -559,9 +559,10 @@ function toursPageNew() {
 function checkIfModelOnline(model_name){
   if(typeof globals.models_online[model_name] == "undefined"){
     console.log(model_name + " is offline.");
-    removeModel(model_name);
-    return false;
-  }
+    //removeModel(model_name);
+    //return false;
+  }else{
+
   if(globals.models_online[model_name].current_show == "private"){
     console.log(model_name + " is in a private show.");
     removeModel(model_name);
@@ -571,6 +572,7 @@ function checkIfModelOnline(model_name){
     console.log(model_name + " is in a ticket show.");
     removeModel(model_name);
     return false;
+  }
   }
   return true;
 }
@@ -582,6 +584,8 @@ function getOpenCamCount(){
 function readMessage(msg) {
   console.log(msg);
   let cmd = msg.data.split(" ");
+  let url = `https://chaturbate.com/${cmd[1]}`;
+  console.log("Loading:",url);
   if(!checkIfModelOnline(cmd[1])){
     return false;
   }
@@ -595,17 +599,15 @@ function readMessage(msg) {
   let wins = document.querySelectorAll("div#mainDiv > div#empty")
   if (wins.length == 0 && !check.length) wins = addCamPlace(cmd[1])
   if (cmd[0] == "watch" && cmd[1].length > 0 && wins.length > 0 && !check.length) {
-    
+
     wins[0].classList.remove('free');
     $(wins[0]).attr("id", cmd[1]);
     let request = new XMLHttpRequest();
-    let url = `https://chaturbate.com/${cmd[1]}`;
-    console.log("Loading:",url);
     request.open('GET', url, true)
     request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
-    request.onload = function() { 
-      addCam(request.responseText, wins[0], cmd[1]) 
-      
+    request.onload = function() {
+      addCam(request.responseText, wins[0], cmd[1])
+
       if(firstCam){
         getChatPage(cmd[1]);
       }
@@ -671,7 +673,7 @@ function addCamPlace(model_name) {
   for (let i =0; i < loops; i++){
     let newCam = camDiv(model_name);
     main.appendChild(newCam);
-  } 
+  }
   let newCam = main.querySelectorAll("div.free");
   main.className = mainClass
   //return main.querySelectorAll("div.free")
@@ -691,7 +693,7 @@ function cleanCams() {
 
   //console.log("loops", loops)
   //console.log("active_cams", len)
-  
+
   let mainClass = 'oneCam'
   if (len > 30) { loops = 35-len; mainClass = 'Cams35' }
   else if (len > 25) { loops = 33-len; mainClass = 'Cams30' }
@@ -873,7 +875,7 @@ function refreshCam(div, model_name) {
   //div.classList.add('free')
   //let model_name = div.getAttribute("name")
   div.removeAttribute("name")
-  
+
   let request = new XMLHttpRequest();
   request.open('GET', `https://chaturbate.com/${model_name}`, true)
   request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
@@ -937,7 +939,7 @@ function topButtons(name) {
   let x = document.createElement('button')
   x.innerHTML = '❌'
   x.classList.add('topButton')
-  
+
   let c = document.createElement('button')
   c.innerHTML = '💬'
   c.title = 'Load Chat'
@@ -954,7 +956,7 @@ function topButtons(name) {
     e.preventDefault()
     refreshCam(e.composedPath()[2], name)
   })
-  
+
   c.addEventListener('click', e => {
     e.preventDefault()
     getChatPage(name);
@@ -987,8 +989,8 @@ function getChatPage(model_name){
 
   let url = 'https://chaturbate.com/in/?tour=SHBY&campaign=yD0Pt&track=embed&room='+model_name;
   let iframe = $('<iframe id="iframe-pdf" scrolling="no" class="iframe-pdf" frameborder="0"></iframe>');
-  iframe.css("height", "calc(100% - 5px - 50px)"); 
-  iframe.css("padding-top", "50px"); 
+  iframe.css("height", "calc(100% - 5px - 50px)");
+  iframe.css("padding-top", "50px");
   console.log(url);
   //div_iframe.hide();
   div_iframe.html("");
