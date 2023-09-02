@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.7
+// @version      2.2.8
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -51,8 +51,8 @@ function generalStuff() {
   globals.camsPath = '/cams-cbplus/'
   globals.blackPath = '/cams-blacklist/'
   globals.toursPath = '/tours/3/'
-  globals.json_path_root_old = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=200&gender=f&gender=c';
-  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=500';
+  globals.json_path_root_old = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=1000&gender=f&gender=c';
+  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=1000';
   globals.follow_path = 'https://chaturbate.com/followed-cams/online/';
   globals.path = document.location.pathname
   globals.models = [];
@@ -295,6 +295,7 @@ function getXMLModelList(){
   });
   //globals.json_path_root
   let url = globals.json_path_root + filter_params;
+  console.log("Fetching List:", url);
   $.getJSON( url, function( data ) {
     $.each( data.results, function( key, val ) {
       globals.models_online[val['username']] = val;
@@ -557,9 +558,9 @@ function toursPageNew() {
 
 function checkIfModelOnline(model_name){
   if(typeof globals.models_online[model_name] == "undefined"){
-    //console.log(model_name + " is offline.");
-    //removeModel(model_name);
-    //return false;
+    console.log(model_name + " is offline.");
+    removeModel(model_name);
+    return false;
   }
   if(globals.models_online[model_name].current_show == "private"){
     console.log(model_name + " is in a private show.");
@@ -598,7 +599,9 @@ function readMessage(msg) {
     wins[0].classList.remove('free');
     $(wins[0]).attr("id", cmd[1]);
     let request = new XMLHttpRequest();
-    request.open('GET', `https://chaturbate.com/${cmd[1]}`, true)
+    let url = `https://chaturbate.com/${cmd[1]}`;
+    console.log("Loading:",url);
+    request.open('GET', url, true)
     request.setRequestHeader("Content-type","application/x-www-form-urlencoded")
     request.onload = function() { 
       addCam(request.responseText, wins[0], cmd[1]) 
