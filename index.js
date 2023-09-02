@@ -51,8 +51,8 @@ function generalStuff() {
   globals.camsPath = '/cams-cbplus/'
   globals.blackPath = '/cams-blacklist/'
   globals.toursPath = '/tours/3/'
-  globals.json_path_root_old = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=1000&gender=f&gender=c';
-  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=1000';
+  globals.json_path_root_old = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=500&gender=f&gender=c';
+  globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=500';
   globals.follow_path = 'https://chaturbate.com/followed-cams/online/';
   globals.path = document.location.pathname
   globals.models = [];
