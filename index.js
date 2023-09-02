@@ -58,6 +58,7 @@ function generalStuff() {
   globals.models = [];
   globals.models_online = {};
   globals.models_list = [];
+  globals.videoInterval = null;
   globals.current_chat = null;
   globals.filters = {
         "gender": ["f","c"],
@@ -987,7 +988,7 @@ function getChatPage(model_name){
   let div_iframe = $("#chatHolder");
   //$("#rightMenuHolder").append(div_iframe);
 
-  let url = 'https://chaturbate.com/in/?tour=SHBY&campaign=yD0Pt&track=embed&room='+model_name;
+  let url = 'https://chaturbate.com/in/?tour=SHBY&campaign=yD0Pt&track=embed&disable_sound=1&room='+model_name;
   let iframe = $('<iframe id="iframe-pdf" scrolling="no" class="iframe-pdf" frameborder="0"></iframe>');
   iframe.css("height", "calc(100% - 5px - 50px)");
   iframe.css("padding-top", "50px");
@@ -996,16 +997,28 @@ function getChatPage(model_name){
   div_iframe.html("");
   div_iframe.append(iframe);
 
+    function removeHiddenVideo(iframe, video_holder){
+      if(iframe.contents().find(video_holder).length > 0){
+          console.log("Video Exsists still.", iframe.contents().find(video_holder));
+          iframe.contents().find(video_holder).remove();
+      }else{
+          clearInterval(videoInterval);
+      }
+    }
+
   function revealChat(){
-      let video_holder = ".videoPlayerDiv";
+      let video_holder = "#VideoPanel";
      let chat_identifier = ".TheatermodeChatDivChat";
-     iframe.contents().remove(video_holder);
+    iframe.contents().find(video_holder).remove();
     iframe.contents().find(chat_identifier);
+      videoInterval = setInterval(function(){
+          removeHiddenVideo(iframe, video_holder);
+      }, 1000);
     //let chat_holder = iframe.contents().find(chat_identifier);
     let chat_window = iframe.contents().find(chat_identifier).detach();
     let chat_input = chat_window.find(".inputDiv").detach();
     //let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
-    iframe.contents().find("body").html("");
+    //iframe.contents().find("body").html("");
     iframe.contents().find("body").append(chat_window);
     iframe.contents().find("body").append(chat_input);
     chat_window = iframe.contents().find(chat_identifier);
@@ -1023,7 +1036,7 @@ function getChatPage(model_name){
 
   iframe.on("load", function() {
     console.log("AFTER LOAD ROOMS", globals.open_rooms);
-    let myTimeout = setTimeout(revealChat, 5000);
+    let myTimeout = setTimeout(revealChat, 1000);
   });
   iframe.attr('src', url);
 
