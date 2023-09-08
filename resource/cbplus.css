@@ -88,6 +88,9 @@
 	background-color: #0C6A93;
 	/*border: 1px solid #F47321;*/
 }
+.broadcast-yourself{
+	display: none;
+}
 #rightMenuHolder{
 	border-left: 1px solid #9b9b9b;
 }
