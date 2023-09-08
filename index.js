@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.2.9
+// @version      2.3.0
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -11,6 +11,7 @@
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/video.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui.min.js
+// @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui-touch.js
 // @resource     vjCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/video-js.css
 // @resource     jqCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/jquery-ui.css
 // @resource     cbCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/cbplus.css
