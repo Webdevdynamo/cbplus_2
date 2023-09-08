@@ -993,6 +993,9 @@ body.vjs-full-window {
   height: 1px;
   margin-left: -1px;
 }
+.vjs-live-display{
+  text-align: left;
+}
 
 .video-js .vjs-volume-panel {
   transition: width 1s;
@@ -1013,8 +1016,8 @@ body.vjs-full-window {
   transition: left 0s;
 }
 .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-hover, .video-js .vjs-volume-panel.vjs-volume-panel-horizontal:active, .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-slider-active {
-  width: 10em;
-  transition: width 0.1s;
+  /*width: 10em;
+  transition: width 0.1s;*/
 }
 .video-js .vjs-volume-panel.vjs-volume-panel-horizontal.vjs-mute-toggle-only {
   width: 4em;
