@@ -1052,7 +1052,8 @@ body.vjs-full-window {
 }
 
 .video-js .vjs-volume-panel {
-  display: flex;
+  /* display: flex; */
+  display: contents;
 }
 
 .video-js .vjs-volume-bar {
