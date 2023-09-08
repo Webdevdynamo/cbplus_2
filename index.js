@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.3.1
+// @version      2.3.2
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -808,7 +808,7 @@ function addMiniButtonsNew() {
         localStorage.setItem(`cbplus_blacklist_${name}`, value);
       }
     }
-    buttons.appendChild(blockButton)
+    //buttons.appendChild(blockButton)
 
     let gender = rooms[i].querySelector('div.title span').className.substr(-1)
     //if (gender == 'm' || gender == 's') rooms[i].style.display = "none";
@@ -828,7 +828,7 @@ function addTabs() {
     // blacklist Tab
     let blackTab = document.createElement("li");
     blackTab.innerHTML = `<a href=\"/cams-blacklist/\">BLACKLIST</a>`;
-    sub_nav.appendChild(blackTab);
+    //sub_nav.appendChild(blackTab);
   }
 }
 
