@@ -988,8 +988,8 @@ body.vjs-full-window {
 
 .video-js .vjs-volume-panel .vjs-volume-control {
   visibility: visible;
-  opacity: 0;
-  width: 1px;
+  /*opacity: 0;
+  width: 1px;*/
   height: 1px;
   margin-left: -1px;
 }
