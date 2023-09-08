@@ -753,7 +753,7 @@ body.vjs-full-window {
 .vjs-controls-disabled .vjs-control-bar,
 .vjs-using-native-controls .vjs-control-bar,
 .vjs-error .vjs-control-bar {
-  display: none !important;
+  display: block !important;
 }
 
 .vjs-audio.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
