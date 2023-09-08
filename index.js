@@ -245,6 +245,7 @@ function camsSite() {
     cancel: ".vjs-volume-control, .topFrame, .vjs-control-bar",
     stop: function (event, ui) { Dropped(event, ui) }
   })
+  console.log("SORTABLE MADE");
    bindEvents();
    hideHeader();
 
