@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.3.0
+// @version      2.3.1
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -11,7 +11,6 @@
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/video.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui.min.js
-// @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui-touch.js
 // @resource     vjCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/video-js.css
 // @resource     jqCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/jquery-ui.css
 // @resource     cbCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/cbplus.css
@@ -1019,7 +1018,7 @@ function getChatPage(model_name){
     let chat_window = iframe.contents().find(chat_identifier).detach();
     let chat_input = chat_window.find(".inputDiv").detach();
     //let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
-    //iframe.contents().find("body").html("");
+    iframe.contents().find("body").html("");
     iframe.contents().find("body").append(chat_window);
     iframe.contents().find("body").append(chat_input);
     chat_window = iframe.contents().find(chat_identifier);
