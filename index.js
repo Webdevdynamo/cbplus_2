@@ -241,7 +241,7 @@ function camsSite() {
   $('div#mainDiv').sortable({
     tolerance: "pointer",
     revert: true,
-    cancel: ".vjs-volume-control, .topFrame",
+    cancel: ".vjs-volume-control, .topFrame, .vjs-control-bar",
     stop: function (event, ui) { Dropped(event, ui) }
   })
    bindEvents();
