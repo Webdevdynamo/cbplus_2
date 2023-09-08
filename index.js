@@ -11,6 +11,7 @@
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/video.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui.min.js
+// @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui-touch.js
 // @resource     vjCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/video-js.css
 // @resource     jqCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/jquery-ui.css
 // @resource     cbCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/cbplus.css
