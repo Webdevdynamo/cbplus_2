@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.3.3
+// @version      2.3.4
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -11,7 +11,6 @@
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/video.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery.min.js
 // @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui.min.js
-// @require      https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/require/jquery-ui-touch.js
 // @resource     vjCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/video-js.css
 // @resource     jqCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/jquery-ui.css
 // @resource     cbCSS https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/resource/cbplus.css
@@ -54,7 +53,8 @@ function generalStuff() {
   globals.toursPath = '/tours/3/'
   globals.json_path_root_old = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&region=northamerica&client_ip=67.60.87.179&limit=500&gender=f&gender=c';
   globals.json_path_root = 'https://chaturbate.com/api/public/affiliates/onlinerooms/?wm=HNwJw&format=json&client_ip=67.60.87.179&limit=500';
-  globals.follow_path = 'https://chaturbate.com/followed-cams/online/';
+  //globals.follow_path = 'https://chaturbate.com/followed-cams/online/';
+  globals.follow_path = 'https://chaturbate.com/api/ts/roomlist/room-list/?enable_recommendations=false&follow=true&limit=90&offline=false&offset=0&regions=NA';
   globals.path = document.location.pathname
   globals.models = [];
   globals.models_online = {};
@@ -242,10 +242,9 @@ function camsSite() {
   $('div#mainDiv').sortable({
     tolerance: "pointer",
     revert: true,
-    cancel: ".vjs-volume-control, .topFrame, .vjs-control-bar",
+    cancel: ".vjs-volume-control, .topFrame",
     stop: function (event, ui) { Dropped(event, ui) }
   })
-  console.log("SORTABLE MADE");
    bindEvents();
    hideHeader();
 
@@ -298,26 +297,46 @@ function getXMLModelList(){
   });
   //globals.json_path_root
   let url = globals.json_path_root + filter_params;
-  console.log("Fetching List:", url);
-  $.getJSON( url, function( data ) {
-    $.each( data.results, function( key, val ) {
-      globals.models_online[val['username']] = val;
-      globals.models_list.push(val);
-    });
-    checkForFollowed()
+   //checkForFollowed()
+
+        globals.items = [];
+        globals.models = [];
+    $.ajax({url: globals.follow_path, success: function(result){
+        $.each( result.rooms, function( key, val ) {
+            globals.models_online[val['username']] = val;
+            globals.models_list.push(val);
+        });
+      //console.log(globals.models_list);
+    console.log("Fetching List:", url);
+    $.getJSON( url, function( data ) {
+        $.each( data.results, function( key, val ) {
+            //console.log(val['username']);
+            if(typeof globals.models_online[val['username']] == "undefined"){
+                globals.models_online[val['username']] = val;
+                globals.models_list.push(val);
+            }
+        });
+      //console.log(globals.models_list);
+    //checkForFollowed()
+        populateFrame();
   });
+    }});
 }
 
 function checkForFollowed(){
     //console.log("ONLINE MODELS", globals.models_online);
     $.ajax({url: globals.follow_path, success: function(result){
-        let follower_holder = $(result);
-        globals.items = [];
-        globals.models = [];
-        follower_holder.find("li.roomCard").each(function(){
-            $(this).find("div.title a").each(function(){
+        //let follower_holder = $(result);
+        console.log(result);
+
+        $.each( result.rooms, function( key, val ) {
+        //follower_holder.find("li.roomCard").each(function(){
+                console.log(val);
+            //$(this).find("div.title a").each(function(){
                 $(this).css("color","#f79603");
-                let model_name = $(this).attr("data-room");
+                //let model_name = $(this).attr("data-room");
+                let model_name = val.room;
+            console.log(model_name);
                 globals.models.push(model_name);
                 if(typeof globals.models_online[model_name] != "undefined"){
                     let cam_state = globals.models_online[model_name].current_show;
@@ -335,7 +354,7 @@ function checkForFollowed(){
                         private.appendTo($(this));
                     }
                 }
-            });
+            //});
             $(this).find("div.follow_star").each(function(){
               $(this).remove();
             });
@@ -348,8 +367,22 @@ function checkForFollowed(){
 
 
 function applyToTemplate(holder, val){
+    val.followed = false;
+    if(val.img){
+        val.followed = true;
+        val.image_url = val.img;
+    }
+    if(val.subject){
+        val.room_subject = val.subject;
+    }
+    if(val.display_age){
+        val.age = val.display_age;
+    }
     let new_template = globals.template.clone()
             new_template.find("div.title a").each(function(){
+                if(val.followed){
+                    this.style.color = "#f79603";
+                }
                 this.setAttribute("href", "/" + val.username + "/");
                 this.innerHTML = val.username;
             });
@@ -368,6 +401,9 @@ function applyToTemplate(holder, val){
                 this.innerHTML = val.room_subject;
             });
             new_template.find("span.age").each(function(){
+                if(!val.age){
+                    val.age = "";
+                }
                 this.innerHTML = val.age;
             });
             new_template.find("span.viewers").each(function(){
@@ -378,8 +414,13 @@ function applyToTemplate(holder, val){
                 this.setAttribute("class", "gender" + val.gender);
             });
             new_template.find("span.time").each(function(){
-                let minutes = Math.floor(val.seconds_online/60);
-                this.innerHTML = minutes + " minutes";
+                if(val.seconds_online){
+                    let minutes = Math.floor(val.seconds_online/60);
+                    this.innerHTML = minutes + " minutes";
+
+                }else{
+                    this.innerHTML = "N/A";
+                }
             });
             if(val.is_new){
               let private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
@@ -810,7 +851,7 @@ function addMiniButtonsNew() {
         localStorage.setItem(`cbplus_blacklist_${name}`, value);
       }
     }
-    //buttons.appendChild(blockButton)
+    buttons.appendChild(blockButton)
 
     let gender = rooms[i].querySelector('div.title span').className.substr(-1)
     //if (gender == 'm' || gender == 's') rooms[i].style.display = "none";
@@ -830,7 +871,7 @@ function addTabs() {
     // blacklist Tab
     let blackTab = document.createElement("li");
     blackTab.innerHTML = `<a href=\"/cams-blacklist/\">BLACKLIST</a>`;
-    //sub_nav.appendChild(blackTab);
+    sub_nav.appendChild(blackTab);
   }
 }
 
@@ -1020,11 +1061,10 @@ function getChatPage(model_name){
     let chat_window = iframe.contents().find(chat_identifier).detach();
     let chat_input = chat_window.find(".inputDiv").detach();
     //let chat_window = chat_holder.find(" .msg-list-wrapper-split:first").detach();
-    iframe.contents().find("body").html("");
+    //iframe.contents().find("body").html("");
     iframe.contents().find("body").append(chat_window);
     iframe.contents().find("body").append(chat_input);
     chat_window = iframe.contents().find(chat_identifier);
-     iframe.contents().find(".BaseRoomContents").remove();
     //chat_window.style.height = "calc(100% - 28px)";
     chat_window.css("height", "calc(100% - 28px)");
     chat_window.css("position", "absolute");
