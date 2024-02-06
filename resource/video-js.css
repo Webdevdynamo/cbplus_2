@@ -818,7 +818,8 @@ body.vjs-full-window {
   cursor: default;
 }
 
-.vjs-live .vjs-progress-control {
+.vjs-live .vjs-progress-control,
+.video-js .vjs-progress-control {
   display: none;
 }
 
