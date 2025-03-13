@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.3.5
+// @version      2.3.6
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -342,16 +342,16 @@ function checkForFollowed(){
                     let cam_state = globals.models_online[model_name].current_show;
                     let is_new = globals.models_online[model_name].is_new;
                     if(is_new){
-                        let private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
-                        private.appendTo($(this));
+                        let _private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
+                        _private.appendTo($(this));
                     }
                     if(cam_state == "private"){
-                        let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
-                        private.appendTo($(this));
+                        let _private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
+                        _private.appendTo($(this));
                     }
                     if(cam_state == "hidden"){
-                        let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
-                        private.appendTo($(this));
+                        let _private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
+                        _private.appendTo($(this));
                     }
                 }
             //});
@@ -423,21 +423,21 @@ function applyToTemplate(holder, val){
                 }
             });
             if(val.is_new){
-              let private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
+              let _private = $('<div class="thumbnail_label thumbnail_label_c_new">NEW</div>');
               new_template.find("div.title a").each(function(){
-                private.appendTo($(this));
+                _private.appendTo($(this));
               })
             }
             if(val.current_show == "private"){
-              let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
+              let _private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>');
               new_template.find("div.title a").each(function(){
-                private.appendTo($(this));
+                _private.appendTo($(this));
               })
             }
             if(val.current_show == "hidden"){
-              let private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
+              let _private = $('<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN TICKET SHOW</div>');
               new_template.find("div.title a").each(function(){
-                private.appendTo($(this));
+                _private.appendTo($(this));
               })
             }
             //<div class="thumbnail_label_featured thumbnail_label_c_private_show">IN PRIVATE</div>
@@ -889,12 +889,15 @@ function addCam(resp, holder, model) {
   let pos1 = resp.search('https://edge')
   let pos2 = resp.search('.m3u8')+5
   let stream = ''
-  if (resp.includes('.m3u8')) { stream = resp.substring(pos1, pos2).replace(/\\u002D/g, '-') }
-  else { stream = 'no data' }
+  if (resp.includes('.m3u8')) {
+      stream = resp.substring(pos1, pos2).replace(/\\u002D/g, '-').replace("live-edge","live-fhls").replace("playlist.m3u8","playlist_sfm4s.m3u8");
+  }else{
+      stream = 'no data';
+  }
   let poster = 'https://cbjpeg.stream.highwebmedia.com/stream?room='+model+'&f='+Math.random()
   let id = 'cam'+Math.floor(Math.random()*10000)
   //div.classList.remove('free')
-  var holder = document.getElementById(model);
+  holder = document.getElementById(model);
   holder.setAttribute("name", model)
   holder.innerHTML = `<video style="width: 100%; height: 100%;" id="${id}" class="video-js" poster="${poster}">
                    <source src="${stream}" type=""application/x-mpegURL""></source></video>`
@@ -1030,8 +1033,14 @@ function getChatPage(model_name){
   globals.current_chat = model_name;
   let div_iframe = $("#chatHolder");
   //$("#rightMenuHolder").append(div_iframe);
-
-  let url = 'https://chaturbate.com/in/?tour=SHBY&campaign=yD0Pt&track=embed&disable_sound=1&room='+model_name;
+  let campaign="yD0Pt";
+  let tour = "SHBY";
+  //let campaign='Tez65';
+  //\let tour = 'LQps';
+  let url = 'https://chaturbate.com/in/?tour='+tour+'&campaign='+campaign+'&track=embed&disable_sound=1&embed_video_only=1&room='+model_name;
+  //let url = 'https://chaturbate.com/embed/theonlymilf/?campaign=yD0Pt&disable_sound=1&embed_video_only=1&room=theonlymilf&tour=SHBY';
+  //let url ='https://chaturbate.com/embed/'+model_name+'/?campaign=yD0Pt&disable_sound=1&embed_video_only=1&join_overlay=1&mobileRedirect=auto&tour='+tour+'';
+    console.log(url);
   let iframe = $('<iframe id="iframe-pdf" scrolling="no" class="iframe-pdf" frameborder="0"></iframe>');
   iframe.css("height", "calc(100% - 5px - 50px)");
   iframe.css("padding-top", "50px");
@@ -1065,7 +1074,7 @@ function getChatPage(model_name){
     //iframe.contents().find("body").html("");
     iframe.contents().find("body").append(chat_window);
     iframe.contents().find("body").append(chat_input);
-    chat_window = iframe.contents().find(chat_identifier);
+    //chat_window = iframe.contents().find(chat_identifier);
     //chat_window.style.height = "calc(100% - 28px)";
     chat_window.css("height", "calc(100% - 28px)");
     chat_window.css("position", "absolute");
