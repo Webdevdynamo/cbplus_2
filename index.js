@@ -3,7 +3,7 @@
 // @namespace    https://github.com/Webdevdynamo/
 // @downloadURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
 // @updateURL  https://raw.githubusercontent.com/Webdevdynamo/cbplus_2/main/index.js
-// @version      2.3.6
+// @version      2.3.7
 // @description  Better Chaturbate!
 // @author       ValzarMen
 // @match      https://www.chaturbate.com/*
@@ -1037,7 +1037,7 @@ function getChatPage(model_name){
   let tour = "SHBY";
   //let campaign='Tez65';
   //\let tour = 'LQps';
-  let url = 'https://chaturbate.com/in/?tour='+tour+'&campaign='+campaign+'&track=embed&disable_sound=1&embed_video_only=1&room='+model_name;
+  let url = 'https://chaturbate.com/in/?tour='+tour+'&campaign='+campaign+'&track=embed&disable_sound=1&room='+model_name;
   //let url = 'https://chaturbate.com/embed/theonlymilf/?campaign=yD0Pt&disable_sound=1&embed_video_only=1&room=theonlymilf&tour=SHBY';
   //let url ='https://chaturbate.com/embed/'+model_name+'/?campaign=yD0Pt&disable_sound=1&embed_video_only=1&join_overlay=1&mobileRedirect=auto&tour='+tour+'';
     console.log(url);
